@@ -89,8 +89,8 @@ void WrpRosInterfaceNode::callbackControlCmd(
   diff_cmd.angular.z = msg->longitudinal.speed *
                        tan(msg->lateral.steering_tire_angle) / wheel_base_;
 
-  RCLCPP_INFO_STREAM(get_logger(), "Initial Speed: " << msg->longitudinal.speed << " Final Linear X: " << diff_cmd.linear.x);
-  RCLCPP_INFO_STREAM(get_logger(), "Initial angle: " << msg->lateral.steering_tire_angle << " Final Angular Z: " << diff_cmd.angular.z);
+  RCLCPP_DEBUG_STREAM(get_logger(), "Initial Speed: " << msg->longitudinal.speed << " Final Linear X: " << diff_cmd.linear.x);
+  RCLCPP_DEBUG_STREAM(get_logger(), "Initial angle: " << msg->lateral.steering_tire_angle << " Final Angular Z: " << diff_cmd.angular.z);
 
   cmd_vel_publisher_->publish(diff_cmd);
 }
