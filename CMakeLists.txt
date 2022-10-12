@@ -8,9 +8,10 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
-# find_package(wrp_ros2 REQUIRED)
+find_package(nav_msgs REQUIRED)
+find_package(wrp_ros2 REQUIRED)
 find_package(autoware_auto_control_msgs REQUIRED)
-# find_package(autoware_auto_vehicle_msgs REQUIRED)
+find_package(autoware_auto_vehicle_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 # find_package(tier4_api_msgs REQUIRED)
@@ -29,7 +30,10 @@ add_executable(wrp_ros_interface_node src/wrp_ros_interface_node.cpp)
 ament_target_dependencies(wrp_ros_interface_node
   rclcpp
   std_msgs
+  nav_msgs
+  wrp_ros2
   autoware_auto_control_msgs
+  autoware_auto_vehicle_msgs
   geometry_msgs
 )
 

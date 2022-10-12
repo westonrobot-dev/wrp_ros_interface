@@ -26,7 +26,6 @@ WrpRosInterfaceNode::WrpRosInterfaceNode(const rclcpp::NodeOptions& options)
     RCLCPP_ERROR_STREAM(this->get_logger(), "Could not setup ros interfaces");
     rclcpp::shutdown();
   }
-
 }
 
 bool WrpRosInterfaceNode::ReadParameters() {
@@ -67,10 +66,20 @@ bool WrpRosInterfaceNode::SetupInterfaces() {
   using std::placeholders::_2;
 
   // From autoware
-  control_cmd_sub_ = create_subscription<
+  control_cmd_sub_ = this->create_subscription<
       autoware_auto_control_msgs::msg::AckermannControlCommand>(
       "/control/command/control_cmd", 1,
       std::bind(&WrpRosInterfaceNode::callbackControlCmd, this, _1));
+
+  // To autoware
+  velocity_report_pub_ =
+      this->create_publisher<autoware_auto_vehicle_msgs::msg::VelocityReport>(
+          "/vehicle/status/velocity_status", 1);
+
+  // From wrp_ros2
+  motion_state_sub_ = this->create_subscription<nav_msgs::msg::Odometry>(
+      "/mobile_base_node/odom", 1,
+      std::bind(&WrpRosInterfaceNode::callbackOdometry, this, _1));
 
   // To wrp_ros2
   cmd_vel_publisher_ =
@@ -89,10 +98,28 @@ void WrpRosInterfaceNode::callbackControlCmd(
   diff_cmd.angular.z = msg->longitudinal.speed *
                        tan(msg->lateral.steering_tire_angle) / wheel_base_;
 
-  RCLCPP_DEBUG_STREAM(get_logger(), "Initial Speed: " << msg->longitudinal.speed << " Final Linear X: " << diff_cmd.linear.x);
-  RCLCPP_DEBUG_STREAM(get_logger(), "Initial angle: " << msg->lateral.steering_tire_angle << " Final Angular Z: " << diff_cmd.angular.z);
+  RCLCPP_DEBUG_STREAM(get_logger(), "Initial Speed: " << msg->longitudinal.speed
+                                                      << " Final Linear X: "
+                                                      << diff_cmd.linear.x);
+  RCLCPP_DEBUG_STREAM(
+      get_logger(),
+      "Initial angle: " << msg->lateral.steering_tire_angle
+                        << " Final Angular Z: " << diff_cmd.angular.z);
 
   cmd_vel_publisher_->publish(diff_cmd);
+}
+
+void WrpRosInterfaceNode::callbackOdometry(
+    const nav_msgs::msg::Odometry::SharedPtr msg) {
+  std_msgs::msg::Header header;
+  header.frame_id = base_frame_id_;
+  header.stamp = get_clock()->now();
+
+  autoware_auto_vehicle_msgs::msg::VelocityReport twist;
+  twist.header = header;
+  twist.longitudinal_velocity = msg->twist.twist.linear.x;  // [m/s]
+  twist.heading_rate = msg->twist.twist.angular.z;          // [rad/s]
+  velocity_report_pub_->publish(twist);
 }
 
 }  // namespace westonrobot

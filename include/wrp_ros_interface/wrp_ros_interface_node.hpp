@@ -5,6 +5,8 @@
 // #include <tier4_api_utils/tier4_api_utils.hpp>
 // #include <vehicle_info_util/vehicle_info_util.hpp>
 
+#include <nav_msgs/msg/odometry.hpp>
+
 #include <autoware_auto_control_msgs/msg/ackermann_control_command.hpp>
 // #include <autoware_auto_vehicle_msgs/msg/control_mode_report.hpp>
 // #include <autoware_auto_vehicle_msgs/msg/engage.hpp>
@@ -15,7 +17,7 @@
 // #include <autoware_auto_vehicle_msgs/msg/steering_report.hpp>
 // #include <autoware_auto_vehicle_msgs/msg/turn_indicators_command.hpp>
 // #include <autoware_auto_vehicle_msgs/msg/turn_indicators_report.hpp>
-// #include <autoware_auto_vehicle_msgs/msg/velocity_report.hpp>
+#include <autoware_auto_vehicle_msgs/msg/velocity_report.hpp>
 
 // #include <tier4_api_msgs/msg/door_status.hpp>
 // #include <tier4_external_api_msgs/srv/set_door.hpp>
@@ -51,19 +53,23 @@ class WrpRosInterfaceNode : public rclcpp::Node {
   double tire_radius_;      // [m]
   double wheel_base_;       // [m]
   // ----- Internal Variables -----
-  // ----- Published Messages-----
+  // ----- Published Messages -----
   // ----- Subscribers & Publishers & Services -----
   rclcpp::Subscription<
       autoware_auto_control_msgs::msg::AckermannControlCommand>::SharedPtr
       control_cmd_sub_;
+  rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr motion_state_sub_;
+  rclcpp::Publisher<autoware_auto_vehicle_msgs::msg::VelocityReport>::SharedPtr
+      velocity_report_pub_;
   rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_publisher_;
   // rclcpp::Service<std_srvs::srv::Empty>::SharedPtr service_;
   // ----- Timers -----
-  // rclcpp::TimerBase::SharedPtr timer_;
+  // rclcpp::TimerBase::SharedPtr report_timer_;
   // ----- Callbacks -----
   void callbackControlCmd(
       const autoware_auto_control_msgs::msg::AckermannControlCommand::SharedPtr
           msg);
+  void callbackOdometry(const nav_msgs::msg::Odometry::SharedPtr msg);
 
   bool ReadParameters();
   bool SetupInterfaces();
