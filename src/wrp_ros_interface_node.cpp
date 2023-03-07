@@ -65,11 +65,11 @@ bool WrpRosInterfaceNode::SetupInterfaces() {
   using std::placeholders::_1;
   using std::placeholders::_2;
 
-  // From autoware
-  control_cmd_sub_ = this->create_subscription<
-      autoware_auto_control_msgs::msg::AckermannControlCommand>(
-      "/control/command/control_cmd", 1,
-      std::bind(&WrpRosInterfaceNode::callbackControlCmd, this, _1));
+  // // From autoware
+  // control_cmd_sub_ = this->create_subscription<
+  //     autoware_auto_control_msgs::msg::AckermannControlCommand>(
+  //     "/control/command/control_cmd", 1,
+  //     std::bind(&WrpRosInterfaceNode::callbackControlCmd, this, _1));
 
   // To autoware
   velocity_report_pub_ =
@@ -81,9 +81,9 @@ bool WrpRosInterfaceNode::SetupInterfaces() {
       "/mobile_base_node/odom", 1,
       std::bind(&WrpRosInterfaceNode::callbackOdometry, this, _1));
 
-  // To wrp_ros2
-  cmd_vel_publisher_ =
-      create_publisher<geometry_msgs::msg::Twist>(cmd_vel_topic_, 1);
+  // // To wrp_ros2
+  // cmd_vel_publisher_ =
+  //     create_publisher<geometry_msgs::msg::Twist>(cmd_vel_topic_, 1);
 
   return true;
 }
