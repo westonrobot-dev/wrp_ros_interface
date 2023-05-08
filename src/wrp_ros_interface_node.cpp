@@ -113,7 +113,7 @@ void WrpRosInterfaceNode::callbackOdometry(
     const nav_msgs::msg::Odometry::SharedPtr msg) {
   std_msgs::msg::Header header;
   header.frame_id = base_frame_id_;
-  header.stamp = get_clock()->now();
+  header.stamp = msg->header.stamp;
 
   autoware_auto_vehicle_msgs::msg::VelocityReport twist;
   twist.header = header;
