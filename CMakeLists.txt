@@ -9,7 +9,6 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(nav_msgs REQUIRED)
-find_package(wrp_ros2 REQUIRED)
 find_package(autoware_auto_control_msgs REQUIRED)
 find_package(autoware_auto_vehicle_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
@@ -31,7 +30,6 @@ ament_target_dependencies(wrp_ros_interface_node
   rclcpp
   std_msgs
   nav_msgs
-  wrp_ros2
   autoware_auto_control_msgs
   autoware_auto_vehicle_msgs
   geometry_msgs
